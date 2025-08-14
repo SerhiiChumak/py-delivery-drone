@@ -1,10 +1,17 @@
+from typing import Optional
+
+
 class Cargo:
     def __init__(self, weight: int) -> None:
         self.weight = weight
 
 
 class BaseRobot:
-    def __init__(self, name: str, weight: int, coords: list = None) -> None:
+    def __init__(self,
+                 name: str,
+                 weight: int,
+                 coords: Optional[list] = None
+                 ) -> None:
         self.name = name
         self.weight = weight
         self.coords = coords if coords is not None else [0, 0]
@@ -26,7 +33,12 @@ class BaseRobot:
 
 
 class FlyingRobot(BaseRobot):
-    def __init__(self, name: str, weight: int, coords: list = None) -> None:
+    def __init__(self,
+                 name: str,
+                 weight: int,
+                 coords: Optional[list] = None
+                 ) -> None:
+        self.coords = coords or [0, 0, 0]
         if coords is not None and len(coords) == 3:
             super().__init__(name, weight, coords[:2])
             self.coords.append(coords[2])
@@ -50,7 +62,7 @@ class DeliveryDrone(FlyingRobot):
             coords: list = None,
             max_load_weight: int = 0,
             current_load:
-            Cargo = None
+            Optional[Cargo] = None
     ) -> None:
         super().__init__(name, weight, coords)
         self.max_load_weight = max_load_weight
@@ -61,16 +73,7 @@ class DeliveryDrone(FlyingRobot):
     def hook_load(self, cargo: Cargo) -> None:
         if self.current_load is None and cargo.weight <= self.max_load_weight:
             self.current_load = cargo
-            print(f"Drone {self.name} hooked a load of {cargo.weight} kg.")
-        elif self.current_load is not None:
-            print(f"Drone {self.name} already has a load.")
-        else:
-            print(f"Drone {self.name} cannot"
-                  f"lift a load of {cargo.weight} kg.")
 
     def unhook_load(self) -> None:
         if self.current_load is not None:
-            print(f"Drone {self.name} unhooked the load.")
             self.current_load = None
-        else:
-            print(f"Drone {self.name} has no load to unhook.")
